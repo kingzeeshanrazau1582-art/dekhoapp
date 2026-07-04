@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Free AI Image Generator</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #0f172a; color: #ffffff; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        .container { background-color: #1e293b; padding: 30px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); width: 100%; max-width: 500px; text-align: center; }
+        h1 { margin-bottom: 20px; font-size: 24px; color: #38bdf8; }
+        textarea { width: 100%; height: 100px; padding: 12px; border-radius: 8px; border: 2px solid #334155; background-color: #0f172a; color: #fff; resize: none; font-size: 16px; margin-bottom: 15px; }
+        textarea:focus { outline: none; border-color: #38bdf8; }
+        button { width: 100%; padding: 12px; background-color: #38bdf8; color: #0f172a; font-weight: bold; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; transition: 0.3s; }
+        button:hover { background-color: #0ea5e9; }
+        button:disabled { background-color: #64748b; cursor: not-allowed; }
+        .result-box { margin-top: 20px; min-height: 250px; display: flex; justify-content: center; align-items: center; border: 2px dashed #334155; border-radius: 8px; overflow: hidden; position: relative; }
+        .result-box img { width: 100%; height: auto; display: block; }
+        .loading { display: none; color: #94a3b8; font-style: italic; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Free AI Image Generator</h1>
+        <textarea id="promptInput" placeholder="Yahan apna prompt likhein... (e.g., A cute robot)"></textarea>
+        <button id="generateBtn" onclick="generateImage()">Image Banao ✨</button>
+
+        <div class="result-box">
+            <span id="loadingText" class="loading">AI Photo bana raha hai... ⏳</span>
+            <img id="outputImage" src="" alt="" style="display: none;">
+        </div>
+    </div>
+
+    <script>
+        function generateImage() {
+            const promptText = document.getElementById("promptInput").value;
+            const generateBtn = document.getElementById("generateBtn");
+            const loadingText = document.getElementById("loadingText");
+            const outputImage = document.getElementById("outputImage");
+
+            if (!promptText.trim()) {
+                alert("Please pehle kuch prompt likhein!");
+                return;
+            }
+
+            // UI Changes (Loading start aur purani image clear karna)
+            generateBtn.disabled = true;
+            loadingText.style.display = "block";
+            outputImage.style.display = "none";
+            outputImage.src = ""; // Purani image ko hatane ke liye taki glitch na ho
+
+            // Ek random number (seed) generate karna fast processing ke liye
+            const randomSeed = Math.floor(Math.random() * 1000000);
+
+            // API URL jisme seed joda gaya hai fast loading ke liye
+            const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(promptText)}?width=512&height=512&nologo=true&seed=${randomSeed}`;
+
+            // Image URL set karna
+            outputImage.src = imageUrl;
+            
+            outputImage.onload = function() {
+                outputImage.style.display = "block";
+                loadingText.style.display = "none";
+                generateBtn.disabled = false;
+            };
+
+            outputImage.onerror = function() {
+                alert("Image nahi ban payi, dobara koshish karein.");
+                loadingText.style.display = "none";
+                generateBtn.disabled = false;
+            };
+        }
+    </script>
+</body>
+</html>
